@@ -1,0 +1,18 @@
+type MarketConfigured @entity(immutable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  marketId: Bytes! # bytes32
+  cap: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type RebalancerSet @entity(immutable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  rebalancer: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

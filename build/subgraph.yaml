@@ -1,6 +1,6 @@
 specVersion: 0.0.5
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: MonarchAgent
@@ -18,10 +18,10 @@ dataSources:
         - RebalancerSet
       abis:
         - name: MonarchAgent
-          file: ./abis/MonarchAgent.json
+          file: MonarchAgent/abis/MonarchAgent.json
       eventHandlers:
         - event: MarketConfigured(indexed address,indexed bytes32,uint256)
           handler: handleMarketConfigured
         - event: RebalancerSet(indexed address,indexed address)
           handler: handleRebalancerSet
-      file: ./src/monarch-agent.ts
+      file: MonarchAgent/MonarchAgent.wasm

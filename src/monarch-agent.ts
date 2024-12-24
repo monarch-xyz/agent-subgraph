@@ -2,33 +2,39 @@ import {
   MarketConfigured as MarketConfiguredEvent,
   RebalancerSet as RebalancerSetEvent
 } from "../generated/MonarchAgent/MonarchAgent"
-import { MarketConfigured, RebalancerSet } from "../generated/schema"
+import { MarketCap, User} from "../generated/schema"
 
 export function handleMarketConfigured(event: MarketConfiguredEvent): void {
-  let entity = new MarketConfigured(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.user = event.params.user
-  entity.marketId = event.params.marketId
-  entity.cap = event.params.cap
+  // see if user exist
+  let user = User.load(event.params.user);
+  if (!user) {
+    user = new User(event.params.user);
+    user.save();
+  }
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
+  // // check if marketCap exist
+  let marketCapId = event.params.marketId.concat(user.id).toString()
+  let marketCap = MarketCap.load(marketCapId);
+  if (!marketCap) {
+    marketCap = new MarketCap(marketCapId);
+    marketCap.marketId = event.params.marketId;
+    marketCap.cap = event.params.cap;
+    marketCap.user = user.id;
+  } else {
+    // update market cap
+    marketCap.cap = event.params.cap;
+  }
+  marketCap.save();
 }
 
 export function handleRebalancerSet(event: RebalancerSetEvent): void {
-  let entity = new RebalancerSet(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.user = event.params.user
-  entity.rebalancer = event.params.rebalancer
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
+  
+  let user = User.load(event.params.user);
+  if (!user) {
+    user = new User(event.params.user);
+    user.rebalancer = event.params.rebalancer;
+  } else {
+    user.rebalancer = event.params.rebalancer;
+  }
+  user.save();
 }
